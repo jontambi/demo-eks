@@ -1,0 +1,27 @@
+{
+    "builders": [
+      {
+      "type": "amazon-ebs",
+      "profile": "default",
+      "region": "us-east-1",
+      "source_ami": "ami-00ddb0e5626798373",
+      "instance_type": "t2.micro",
+      "ssh_username": "ubuntu",
+      "ssh_interface": "public_ip",
+      "communicator": "ssh",
+      "ami_name": "ubuntu1804_base_img_{{timestamp}}",
+      "tags": {
+        "Name": "Image_base_Ubuntu1804"
+        }
+      }
+    ],
+  
+    "provisioners": [
+      {
+        "type": "shell",
+        "script": "../scripts/package-install-ubuntu1804.sh",
+        "pause_before": "10s",
+        "timeout": "10s"
+      }
+    ]
+}

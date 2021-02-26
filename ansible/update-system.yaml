@@ -1,0 +1,66 @@
+---
+  - hosts: all 
+    remote_user: centos
+    gather_facts: yes
+    become: true
+
+    tasks:
+    - name: update the system CentOS7
+      yum:
+        name: "*"
+        state: latest
+    
+    - name: install security updates
+      yum:
+        name: "*"
+        security: yes
+        state: latest
+    
+  #  - name: install epel-release-7
+  #    shell: |
+  #      yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    
+    - name: install epel-release
+      yum:
+        name: epel-release
+        state: latest
+    
+#    - name: restart system
+#      shell: "sleep 5 && reboot"
+#      async: 1
+#      poll: 0
+    
+#    - name: wait for the system to reboot
+#      wait_for_connection:
+#          connect_timeout: 20
+#          sleep: 5
+#          delay: 5
+#          timeout: 60
+    
+    - name: install packages
+      yum:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      with_items:
+        - net-tools
+        - wget
+        - vim
+        - htop
+        - yum-plugin-security
+        - telnet
+        - traceroute
+
+    - name: add kubernetes repository
+      yum_repository:
+        name: Kubernetes
+        description: Kubernetes YUM repository
+        baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch
+        gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+        enabled: yes
+        gpgcheck: yes
+        repo_gpgcheck: yes
+
+    - name: installing kubeadm, kubelet and kubectl
+      shell: |
+        yum install -y kubectl --disableexcludes=kubernetes

@@ -1,0 +1,8 @@
+---
+- hosts: default
+  remote_user: centos
+  gather_facts: yes
+  become: true
+
+  roles:
+    - role: k8s-master
